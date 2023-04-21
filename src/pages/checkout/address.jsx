@@ -1,5 +1,6 @@
 import { Box, Button, FormControl, Grid, InputLabel, Select, TextField, Typography } from "@mui/material";
 import { ShopLayout } from "../../../components/layout";
+import { isValidToken } from "../../../utils/jwt";
 
 const AddressPage = (props) => {
   return (
@@ -55,4 +56,38 @@ const AddressPage = (props) => {
     </ShopLayout>
   )};
 
+
+//   // This was the way it was done before NextJS 12, now we can use middleware
+//   // the advantages of using middleware are: 
+//   // 1. We can reuse the same code in other pages
+//   // 2. The page can be rendered statically, but get confirmation from the server that the user is logged in (this is not possible with getserversideprops  )
+//   // when we use serversideprops, the page is rendered upon each request, so we can't use the static optimization
+//   export const getServerSideProps = async (context) => {
+
+//       const { token = '' } = context.req.cookies;
+//       let isValid = false;
+
+//     try {
+//         await isValidToken(token)
+//         isValid = true;
+//     } catch (error) {
+//         console.log("error", error);
+//         isValid = false;
+//     }
+
+//     if(!isValid) {
+//         return {
+//             redirect: {
+//                 destination: '/auth/login?p=checkout/address',
+//                 permanent: false,
+//             }
+//         }
+//     }
+
+//     return {
+//         props: {}
+//     }
+//   }
+
 export default AddressPage;
+

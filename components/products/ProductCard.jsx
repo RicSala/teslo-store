@@ -1,17 +1,18 @@
-import { Box, Card, CardActionArea, CardMedia, Grid, Link, Typography } from "@mui/material";
+import { Box, Card, CardActionArea, CardMedia, Chip, Grid, Link, Typography } from "@mui/material";
 import NextLink from "next/link";
 import { useMemo, useState } from "react";
 
 export const ProductCard = ({product}) => {
 
 const [isHovered, setIsHovered] = useState(false);
+const [isImageLoaded, setIsImageLoaded] = useState(false);
 
 
 const productImage = useMemo(() => {
     if (isHovered) {
-      return `products/${product.images[1]}`;
+      return `/products/${product.images[1]}`;
     }
-    return `products/${product.images[0]}`;
+    return `/products/${product.images[0]}`;
 }, [product.images, isHovered]);
 // useMemo is a hook that returns a value that is memoized
 
@@ -28,15 +29,32 @@ const productImage = useMemo(() => {
     onMouseLeave={() => setIsHovered(false)}
     >
     <Card>
-        <CardActionArea>
-          <NextLink href="product/slug" passHref prefetch={false}>
+          <NextLink href={`/product/${product.slug}`} passHref prefetch={false}>
             <Link component={"div"} >
+        <CardActionArea>
+
+              {
+               product.inStock === 0 ?  
+              <Chip
+                color="primary"
+                label={"Agotado"}
+                sx={{
+                  position: "absolute",
+                  zIndex: 1,
+                  top: 10,
+                  right: 10,
+                }}
+
+                /> : 
+                <></>
+              }
 
               <CardMedia
                   component="img"
                   image={productImage}
                   alt={product.title}
                   className="fadeIn"
+                  onLoad={() => setIsImageLoaded(true)}
                   // onLoad={() => setIsHovered(false)} // so we can add a loading spinner
               >
               {/* another way to do it would be... */}
@@ -49,14 +67,14 @@ const productImage = useMemo(() => {
               > */}
                   
               </CardMedia>
+        </CardActionArea>
             </Link>
           </NextLink>
-        </CardActionArea>
     </Card>
     <Box
-    sx={{ mt: 1}} className='fadeIn'>
-    <Typography fontWeight={700} >{product.title}</Typography>
-    <Typography fontWeight={500}>${product.price}</Typography>
+    sx={{ mt: 1, display: isImageLoaded? 'block' : 'none'}} className='fadeIn' >
+      <Typography fontWeight={700} >{product.title}</Typography>
+      <Typography fontWeight={500}>${product.price}</Typography>
 
     </Box>
 </Grid>

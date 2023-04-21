@@ -4,7 +4,6 @@ import 'react-slideshow-image/dist/styles.css'
 
 export const ProductSlideshow = ({images}) => {
 
-    console.log("FROM SLIDESHOW:", images);
   return (
     <Slide
     easing="ease"

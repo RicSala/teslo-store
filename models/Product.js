@@ -35,10 +35,22 @@ const productSchema = new Schema({
 });
 
 
-productSchema.index({ title: 'text', tags: 'text' });
+productSchema.index({ title: 'text', tags: 'text' }); // TODO: what is this doing?
 
 
-const Product = mongoose.models.Product || model('Product', productSchema );
+// TODO: Check this out - this is a workaround for the error...
+let Product
+
+if (!mongoose.models) {
+    Product = model('Product', productSchema )
+} else
+{
+    if (!mongoose.models.Product) {
+        Product = model('Product', productSchema )
+    } else {
+        Product = mongoose.models.Product
+    }
+}
 
 
 export default Product;

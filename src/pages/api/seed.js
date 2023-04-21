@@ -1,5 +1,6 @@
+import mongoose from "mongoose";
 import { db, database } from "../../../database";
-import { Product } from "../../../models";
+import { Product, User } from "../../../models";
 
 
 export default async function handler(req, res) {
@@ -14,15 +15,18 @@ export default async function handler(req, res) {
 
     try {
         await db.connect();
+
+        console.log("models:",mongoose.models)
+        await User.deleteMany({});
         await Product.deleteMany({});
-        console.log('Products deleted');
-        const insertedProducts = await Product.insertMany(database.initialData.products);
-        console.log('Products inserted:', insertedProducts)
-        console.log('Product model database:', Product.db.name);
-console.log('Product model collection:', Product.collection.name);
+        await User.insertMany(database.initialData.users);
+        await Product.insertMany(database.initialData.products);
+
         await db.disconnect();
         res.status(200).json({ status: 'Proceso realizado correctamente' });
     } catch (error) {
+        console.log(error);
+        
         res.status(500).json({ status: 'ERROR', error });
     }
 

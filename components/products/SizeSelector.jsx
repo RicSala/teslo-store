@@ -1,8 +1,8 @@
 import { Box, Button } from "@mui/material";
 
-export const SizeSelector = ({selectedSize, sizes}) => {
+export const SizeSelector = ({selectedSize, sizes, onSelectSize}) => {
 
-    console.log("FROM SELECTRO", sizes)
+
   return (
     <Box>
         {
@@ -10,8 +10,12 @@ export const SizeSelector = ({selectedSize, sizes}) => {
                 return (
                 <Button
                 key={size}
+                // change the size of the button if is selected
                 size="small"
-                color = {selectedSize === size ? "primary" : "info"}
+                variant="contained"
+
+            color={selectedSize === size ? "primary" : "info"} // TODO: THIS IS NOT WORKING
+            onClick={() => onSelectSize(size)}
                 > {size}
                 </Button>
 

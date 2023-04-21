@@ -1,8 +1,22 @@
 import { Box, Button, Card, CardContent, Divider, Grid, Typography } from "@mui/material";
 import { ShopLayout } from "../../../components/layout";
 import { CartList, OrderSummary } from "../../../components/cart";
+import { useContext, useEffect } from "react";
+import { CartContext } from "../../../context";
+import { useRouter } from "next/router";
 
 const CartPage = () => {
+
+    const router = useRouter();
+
+    const { isLoaded, productsInCart } = useContext(CartContext);
+
+    useEffect(() => {
+        (isLoaded && productsInCart.length === 0) && router.replace('/cart/empty');
+    }, [isLoaded, productsInCart, router]); // TODO: why do we need to add router here?
+
+    if (!isLoaded) return <> </>;
+
   return (
     <ShopLayout title='Carrito - 3' pageDescription='Carrito de compras de la tienda'>
     <Typography variant="h1" component="h1">Carrito</Typography>
@@ -17,7 +31,12 @@ const CartPage = () => {
                     <Divider sx={{my:1}}/>
                     <OrderSummary />
                     <Box sx={{mt:3}}>
-                    <Button color="secondary" className="circular-btn" fullWidth>
+                    <Button 
+                        color="secondary" 
+                        className="circular-btn" 
+                        fullWidth
+                        href="/checkout/address"
+                        >
                         Checkout
                     </Button>
 
