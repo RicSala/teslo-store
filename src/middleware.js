@@ -3,7 +3,9 @@ import { isValidToken } from "../utils/jwt";
 
 export async function middleware(req, event) {
 
-    if(req.nextUrl.pathname.startsWith('/checkout')) {
+    if (req.nextUrl.pathname.startsWith('/checkout')) {
+        console.log("req pathname", req.nextUrl)
+        console.log("checkout middleware")
         return await validateUser(req);
     }
 
@@ -14,11 +16,12 @@ export async function middleware(req, event) {
 // See "Matching Paths" below to learn more
 export const config = {
     matcher: '/checkout/:path*',
-  }
+}
 
 
 const validateUser = async (req) => {
-    const { token = '' } = req.cookies;
+
+    let token = req.cookies.get('token')?.value
     let isValid = false;
 
     console.log("req middleware", req.nextUrl.pathname)

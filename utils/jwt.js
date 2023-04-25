@@ -1,36 +1,29 @@
 import jwt from 'jsonwebtoken';
 
 
-export const signToken = (_id, email ) => {
+export const signToken = (_id, email) => {
 
-    if(!process.env.JWT_SECRET_SEED) {
+    if (!process.env.JWT_SECRET_SEED) {
         throw new Error('No hay semilla de JWT, revisar variables de entorno');
     }
 
     return jwt.sign(
-        // payload
-        {
-            _id, email
-        },
+        // payload, the data we want to sign
+        { _id, email },
 
         // secret
         process.env.JWT_SECRET_SEED,
 
         // options
-        {
-            expiresIn: '30d',
-        }
-        )
-
-
- 
+        { expiresIn: '30d', }
+    )
 }
 
 
-// This function returns a promise that resolves to the user id if the token is valid (aka, not expired, the user exists, no tampering, etc)
+// returns a promise that resolves to the user id if the token is valid
 export const isValidToken = (token) => {
 
-    if(!process.env.JWT_SECRET_SEED) {
+    if (!process.env.JWT_SECRET_SEED) {
         throw new Error('No hay semilla de JWT, revisar variables de entorno');
     }
 
@@ -38,10 +31,10 @@ export const isValidToken = (token) => {
 
         try {
             jwt.verify(token, process.env.JWT_SECRET_SEED, (err, payload) => {
-                if(err) {
+                if (err) {
                     return reject('JWT no válido');
                 } else {
-                    const {_id} = payload;
+                    const { _id } = payload;
                     return resolve(_id)
                 }
 
@@ -49,7 +42,5 @@ export const isValidToken = (token) => {
         } catch (error) {
             reject(error);
         }
-
     })
 }
- 

@@ -8,7 +8,7 @@ export const SideMenu = () => {
 
 
 
-  
+
   const router = useRouter();
   const { isMenuOpen, toggleSideMenu } = useContext(UIContext);
   const { isLoggedIn, logoutUser, user } = useContext(AuthContext);
@@ -16,8 +16,6 @@ export const SideMenu = () => {
   const [searchTerm, setSearchTerm] = useState('');
 
   const navigateTo = (path) => {
-    console.log("toggle from navigate function")
-    // navigate the user to the path
     router.push(path)
     toggleSideMenu()
   }
@@ -27,7 +25,7 @@ export const SideMenu = () => {
     navigateTo(`/search/${searchTerm}`)
   }
 
-  const inputRef = useRef();
+  const inputRef = useRef(); // we use it to focus the input element when the menu opens (autoFocus doesn't work)
 
   useEffect(() => {
     if (isMenuOpen) {
@@ -46,147 +44,148 @@ export const SideMenu = () => {
 
 
   return (
-      <Drawer
-          open={isMenuOpen}
-          onClose={toggleSideMenu}
-          anchor="right"
-          xs= {{ backdropFilter: "blur(4px)", transition:"all 1s ease-out" }}
-      >
-          <Box sx={{ width: 250, paddingTop: 5}}>
-              <List>
-                  <ListItem>
-                      <Input
-                          autoFocus
-                          type="text"
-                          placeholder="Buscar"
-                          value={searchTerm}
-                          onChange={(e) => setSearchTerm(e.target.value)}
-                          ref={inputRef}
+    <Drawer
+      open={isMenuOpen}
+      onClose={toggleSideMenu}
+      anchor="right"
+    // ModalProps= {{ BackdropProps:  {backdropFilter: "blur(4px)", transition:"all 1s ease-out"} }}
+    >
+      <Box sx={{ width: 250, paddingTop: 5 }}>
+        <List>
+          <ListItem>
+            <Input
+              autoFocus
+              type="text"
+              placeholder="Buscar"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              ref={inputRef}
 
-                          // for some reason, on keydown generates several events, so we use onKeyUp
-                          onKeyUp={(e) => { if (e.key === 'Enter') onSearchTerm() }}
-                          endAdornment={
-                              <InputAdornment position="end">
-                                  <IconButton
-                                  onClick={onSearchTerm} 
-                                  >
-                                      <SearchOutlined/>
-                                  </IconButton>
-                            </InputAdornment>
-                           }
-                          
-                      />
+              // for some reason, on keydown generates several events, so we use onKeyUp
+              onKeyUp={(e) => { if (e.key === 'Enter') onSearchTerm() }}
+              endAdornment={
+                <InputAdornment position="end">
+                  <IconButton
+                    onClick={onSearchTerm}
+                  >
+                    <SearchOutlined />
+                  </IconButton>
+                </InputAdornment>
+              }
+
+            />
+          </ListItem>
+
+          {
+            isLoggedIn &&
+            <>
+              <ListItem button >
+                <ListItemIcon>
+                  <AccountCircleOutlined />
+                </ListItemIcon>
+                <ListItemText primary={'Perfil'} />
+              </ListItem>
+
+              <ListItem button >
+                <ListItemIcon>
+                  <ConfirmationNumberOutlined />
+                </ListItemIcon>
+                <ListItemText primary={'Mis Ordenes'} />
+              </ListItem>
+            </>
+          }
+
+          <ListItem button sx={{ display: { xs: '', sm: 'none' } }}
+            onClick={() => navigateTo('/category/men')}
+          >
+            <ListItemIcon>
+              <MaleOutlined />
+            </ListItemIcon>
+            <ListItemText primary={'Hombres'} />
+          </ListItem>
+
+          <ListItem button sx={{ display: { xs: '', sm: 'none' } }}
+            onClick={() => navigateTo('/category/women')}
+          >
+            <ListItemIcon>
+              <FemaleOutlined />
+            </ListItemIcon>
+            <ListItemText primary={'Mujeres'} />
+          </ListItem>
+
+          <ListItem button sx={{ display: { xs: '', sm: 'none' } }}
+            onClick={() => navigateTo('/category/kid')}
+          >
+            <ListItemIcon>
+              <EscalatorWarningOutlined />
+            </ListItemIcon>
+            <ListItemText primary={'Niños'} />
+          </ListItem>
+
+          {
+            isLoggedIn ?
+              <ListItem button
+                sx={{ display: isLoggedIn ? 'flex' : 'none' }}
+                onClick={logoutUser}
+              >
+                <ListItemIcon>
+                  <LoginOutlined />
+                </ListItemIcon>
+                <ListItemText primary={'Salir'} />
+              </ListItem>
+              :
+
+              <ListItem button sx={{ display: isLoggedIn ? 'none' : 'flex' }}
+                onClick={() => navigateTo(`/auth/login?p=${router.asPath}`)}
+              >
+                <ListItemIcon>
+                  <VpnKeyOutlined />
+                </ListItemIcon>
+                <ListItemText primary={'Ingresar'} />
+              </ListItem>
+
+          }
+
+          {/* Admin */}
+          {
+            isLoggedIn && user?.role === 'admin' && (
+
+              <>
+                <Divider />
+
+                <ListSubheader>Admin Panel</ListSubheader>
+                <ListItem button >
+                  <ListItemIcon>
+                    <CategoryOutlined />
+                  </ListItemIcon>
+                  <ListItemText primary={'Productos'} />
                 </ListItem>
 
-                {
-                  isLoggedIn &&
-                    <>
-                      <ListItem button >
-                              <ListItemIcon>
-                                  <AccountCircleOutlined/>
-                          </ListItemIcon>
-                          <ListItemText primary={'Perfil'} />
-                      </ListItem>
-                      
-                      <ListItem button >
-                        <ListItemIcon>
-                            <ConfirmationNumberOutlined/>
-                        </ListItemIcon>
-                        <ListItemText primary={'Mis Ordenes'} />
-                      </ListItem>
-                  </>
-                }
+                <ListItem button>
+                  <ListItemIcon>
+                    <ConfirmationNumberOutlined />
+                  </ListItemIcon>
+                  <ListItemText primary={'Ordenes'} />
+                </ListItem>
 
-                  <ListItem button sx={{ display: { xs: '', sm: 'none' } }}
-                  onClick={()=> navigateTo('/category/men')}
-                  >
-                    <ListItemIcon>
-                        <MaleOutlined/>
-                    </ListItemIcon>
-                    <ListItemText primary={'Hombres'} />
-                  </ListItem>
-                  
-                  <ListItem button sx={{ display: { xs: '', sm: 'none' } }}
-                  onClick={()=> navigateTo('/category/women')}
-                  >
-                    <ListItemIcon>
-                        <FemaleOutlined/>
-                    </ListItemIcon>
-                    <ListItemText primary={'Mujeres'} />
-                  </ListItem>
-                  
-                  <ListItem button sx={{ display: { xs: '', sm: 'none' } }}
-                  onClick={()=> navigateTo('/category/kid')}
-                  >
-                    <ListItemIcon>
-                        <EscalatorWarningOutlined/>
-                    </ListItemIcon>
-                    <ListItemText primary={'Niños'} />
-                  </ListItem>
-                  
-                  {
-                    isLoggedIn? 
-                      <ListItem button 
-                        sx={{display: isLoggedIn? 'flex' : 'none'}}
-                        onClick={logoutUser}
-                        >
-                        <ListItemIcon>
-                            <LoginOutlined/>
-                        </ListItemIcon>
-                        <ListItemText primary={'Salir'} />
-                      </ListItem>
-                      :
-
-                    <ListItem button sx={{display: isLoggedIn? 'none' : 'flex'}}
-                    onClick={()=> navigateTo(`/auth/login?p=${router.asPath}`)}
-                     >
-                      <ListItemIcon>
-                          <VpnKeyOutlined/>
-                      </ListItemIcon>
-                      <ListItemText primary={'Ingresar'} />
-                    </ListItem>
-
-                  }
-
-                {/* Admin */}
-                {
-                  isLoggedIn && user?.role === 'admin' && (
-
-                    <>
-                    <Divider />
-                    
-                      <ListSubheader>Admin Panel</ListSubheader>
-                      <ListItem button >
-                        <ListItemIcon>
-                            <CategoryOutlined/>
-                        </ListItemIcon>
-                        <ListItemText primary={'Productos'} />
-                      </ListItem>
-                      
-                      <ListItem button>
-                        <ListItemIcon>
-                            <ConfirmationNumberOutlined/>
-                        </ListItemIcon>
-                        <ListItemText primary={'Ordenes'} />
-                      </ListItem>
-                      
-                      <ListItem button>
-                        <ListItemIcon>
-                            <AdminPanelSettings/>
-                        </ListItemIcon>
-                        <ListItemText primary={'Usuarios'} />
-                    </ListItem>
-                    </>
-                  )
-                }
+                <ListItem button>
+                  <ListItemIcon>
+                    <AdminPanelSettings />
+                  </ListItemIcon>
+                  <ListItemText primary={'Usuarios'} />
+                </ListItem>
+              </>
+            )
+          }
 
 
-                          
-                          
-              </List>
-          </Box>
-          
-          
-      
+
+
+        </List>
+      </Box>
+
+
+
     </Drawer>
-  )};
+  )
+};

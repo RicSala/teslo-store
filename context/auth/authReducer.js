@@ -3,7 +3,6 @@ export const authReducer = (state, action) => {
   switch (action.type) {
 
     case '[AUTH] - Login':
-      console.log("USER FROM REDUCER", action.payload)
       return {
         ...state,
         isLoggedIn: true,

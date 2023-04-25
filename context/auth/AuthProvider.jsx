@@ -15,13 +15,13 @@ export const AuthProvider = ({ children }) => {
   const router = useRouter(); // 
   const [state, dispatch] = useReducer(authReducer, AUTH_INITIAL_STATE);
 
-  useEffect(() => { // Again, this useEffect is running twice
+  // Every time the app loads we check if there is a token in the cookies and revalidate it
+  useEffect(() => { // TODO: this is running twice, we need to fix it
     // get token from the cookies
     checkToken();
   }, []);
 
 
-  // check if the token is valid and if it is, update the user in the state
   const checkToken = async () => {
 
     if (Cookies.get('token') === undefined) return; // if there is no token, we don't do anything (we don't want to call the endpoint
@@ -29,10 +29,8 @@ export const AuthProvider = ({ children }) => {
     try {
       // call endpoint to validate token
       const {data} = await tesloApi.get('/user/validate-token')
-  
       // revalidate token saving the new one
       Cookies.set('token', data.token);
-  
       // dispatch action to update the user in the state
       dispatch({type: '[AUTH] - Login', payload: data.user});
 
@@ -74,7 +72,6 @@ export const AuthProvider = ({ children }) => {
       // Save user in state
       dispatch({type: '[AUTH] - Login', payload: user});
       // return true
-
       return {
         hasError: false,
       }
@@ -98,13 +95,12 @@ export const AuthProvider = ({ children }) => {
   const logoutUser = () => {
     Cookies.remove('token');
     Cookies.remove('productsInCart');
-
     router.reload(); // reload the page to update the state instead of dispatching an action (as we removed the cookies, we don't have the user anymore)
-
   }
 
 
 
+  // We return the state and the methods so we can use them in the components
   return (
     <AuthContext.Provider value={{ 
         ...state,

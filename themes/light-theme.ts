@@ -1,7 +1,9 @@
 import { createTheme } from "@mui/material/styles"
-import { red } from "@mui/material/colors"
+
+// REVIEW: Difference defaultProps and styleOverrides
 
 export const lightTheme = createTheme({
+	// PALETTE #################################
 	palette: {
 		mode: "light",
 		primary: {
@@ -14,12 +16,16 @@ export const lightTheme = createTheme({
 			main: "#FFF"
 		}
 	},
+
+	// COMPONENTS ##############################
 	components: {
+
 		MuiLink: {
 			defaultProps: {
 				underline: "none"
 			}
 		},
+
 		MuiAppBar: {
 			defaultProps: {
 				elevation: 0,

@@ -15,31 +15,32 @@ const CART_INITIAL_STATE = {
 
 // TODO: why this component is loading twice???
 export const CartProvider = ({ children }) => {
+
   const [state, dispatch] = useReducer(cartReducer, CART_INITIAL_STATE);
+
 
   const isMounted = useRef(false); // This is a workaround to avoid the useEffect to run twice, but it would be better to find out why it is running twice
 
-  
-  
-  // load the cart from the cookie the first time the page loads
+
+  // This useEffect: load the cart from the cookie the first time the component loads
   useEffect(() => {
 
     if (isMounted.current) return; // if the component is already mounted, then return
 
     try {
       const cartFromCookies = Cookie.get('productsInCart') ? JSON.parse(Cookie.get('productsInCart')) : []; // get the cart from the cookie
-      dispatch({ type: '[CART] - LoadCart from cookies | storage', payload: cartFromCookies })
+      dispatch({ type: '[CART] - LoadCart from cookies | storage', payload: cartFromCookies }) // and update the state
       
     } catch (error) {
       console.log("ERROR!", error)
       dispatch({ type: '[CART] - LoadCart from cookies | storage', payload: [] })
     }
-    
     isMounted.current = true; // set the component as mounted
 
   }, []); // run this effect only once
 
 
+  // This useEffect: update the order summary state every time the cart changes
   useEffect(() => {
 
     const numberOfItems = state.productsInCart.reduce((prev, product) => prev + product.quantity , 0)
@@ -61,15 +62,16 @@ export const CartProvider = ({ children }) => {
       payload: orderSummary
     })
   
-  }, [state.productsInCart]);
+  }, [state.productsInCart]); // we do this every time the cart changes
 
 
-  // save the cart to the cookie every time the cart changes
+  // This useEffect: save the cart to the cookie every time the cart changes
   useEffect(() => {
     Cookie.set('productsInCart', JSON.stringify(state.productsInCart)) // save the cart to the cookie (this is a side effect)...
   }, [state.productsInCart]); // ... when the cart changes
 
 
+  // Given an array and an item, if the item is not in the array, then add it to the array, otherwise update the quantity
   const updateArray = (array, item) => {
 
     const itemIndex = array.findIndex((cartItem) => { // returns the index of the first element that satifies the condition
@@ -84,7 +86,7 @@ export const CartProvider = ({ children }) => {
     }
   }
 
-
+  // Given a product and quantity (in the product object), add it to the cart
   const addProductToCart = (product) => {
 
     const UpdatedCart = updateArray(state.productsInCart, product) // given a product and qty, create a new array of the cart
@@ -97,13 +99,14 @@ export const CartProvider = ({ children }) => {
 
   };
 
-  const updateProduct = (product) => {
 
+  const updateProduct = (product) => {
     dispatch({
       type: '[CART] - Update product quantity',
       payload: product
     })
   }
+
 
   const removeProductFromCart = (product) => {
     console.log("removeProductFromCart", product)
@@ -116,12 +119,13 @@ export const CartProvider = ({ children }) => {
 
 
   return (
-    <CartContext.Provider value={{ ...state,
+    <CartContext.Provider value={{ 
+      ...state,
     
     // methods
-    addProductToCart,
-    updateProduct,
-    removeProductFromCart
+      addProductToCart,
+      updateProduct,
+      removeProductFromCart
      }}>
       {children}
     </CartContext.Provider>

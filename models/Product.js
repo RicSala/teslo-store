@@ -1,4 +1,4 @@
-import mongoose, { Schema, model, Model } from 'mongoose';
+import mongoose, { Schema, model } from 'mongoose';
 
 
 const productSchema = new Schema({
@@ -9,7 +9,7 @@ const productSchema = new Schema({
     sizes: [{
         type: String,
         enum: {
-            values: ['XS','S','M','L','XL','XXL','XXXL'],
+            values: ['XS', 'S', 'M', 'L', 'XL', 'XXL', 'XXXL'],
             message: '{VALUE} no es un tamaño válido'
         }
     }],
@@ -19,34 +19,33 @@ const productSchema = new Schema({
     type: {
         type: String,
         enum: {
-            values: ['shirts','pants','hoodies','hats'],
+            values: ['shirts', 'pants', 'hoodies', 'hats'],
             message: '{VALUE} no es un tipo válido'
         }
     },
     gender: {
         type: String,
         enum: {
-            values: ['men','women','kid','unisex'],
+            values: ['men', 'women', 'kid', 'unisex'],
             message: '{VALUE} no es un genero válido'
         }
     }
-},{
-    timestamps: true
+}, {
+    timestamps: true // This will add createdAt and updatedAt fields to the schema
 });
 
 
-productSchema.index({ title: 'text', tags: 'text' }); // TODO: what is this doing?
+productSchema.index({ title: 'text', tags: 'text' }); // Creates a compound index for title and tags that will be used for faster text search
 
 
 // TODO: Check this out - this is a workaround for the error...
 let Product
 
 if (!mongoose.models) {
-    Product = model('Product', productSchema )
-} else
-{
+    Product = model('Product', productSchema)
+} else {
     if (!mongoose.models.Product) {
-        Product = model('Product', productSchema )
+        Product = model('Product', productSchema)
     } else {
         Product = mongoose.models.Product
     }

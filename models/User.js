@@ -1,4 +1,4 @@
-import mongoose, {Schema, model, Model} from "mongoose";
+import mongoose, { Schema, model } from "mongoose";
 
 
 const userSchema = new Schema({
@@ -8,27 +8,25 @@ const userSchema = new Schema({
     role: {
         type: String,
         enum: {
-            values: ['user','admin'],
+            values: ['user', 'admin'],
             message: '{VALUE} no es un rol válido',
             default: 'user',
             required: true,
         },
     },
-    }, {
-        timestamps: true // will add createdAt and updatedAt fields
-    }
+}, {
+    timestamps: true // will add createdAt and updatedAt fields
+}
 )
 
 
-// TODO: WARNING: THIS FAILS!!!!
 let User
 
 if (!mongoose.models) {
-    User = model('User', userSchema )
-} else
-{
+    User = model('User', userSchema)
+} else {
     if (!mongoose.models.User) {
-        User = model('User', userSchema )
+        User = model('User', userSchema)
     } else {
         User = mongoose.models.User
     }

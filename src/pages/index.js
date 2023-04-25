@@ -1,8 +1,8 @@
 import { Inter } from "next/font/google"
-import { ShopLayout } from "../../components/layout"
 import { Card, CardActionArea, CardMedia, Grid, Typography } from "@mui/material"
 
 
+import { ShopLayout } from "../../components/layout"
 import { initialData } from "../../database/seed-data"
 import { ProductList } from "../../components/products"
 import { useProducts } from "../../hooks"
@@ -11,12 +11,9 @@ import { FullScreenLoading } from "../../components/ui"
 const inter = Inter({ subsets: ["latin"] })
 
 
-
-
-
 export default function HomePage() {
 
-const { products, isLoading, isError } = useProducts("/products")
+	const { products, isLoading, isError } = useProducts("/products")
 
 	return (
 		<ShopLayout
@@ -31,8 +28,8 @@ const { products, isLoading, isError } = useProducts("/products")
 				Todos los productos
 			</Typography>
 			{
-				isLoading? <h1>Cargando</h1> : 
-				<ProductList products={products} />
+				isLoading ? <h1>Cargando</h1> :
+					<ProductList products={products} />
 			}
 
 		</ShopLayout>

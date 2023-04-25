@@ -6,21 +6,22 @@ import { ProductList } from "../../../components/products";
 
 
 
-const MenPage = (props) => {
+const MenPage = () => {
 
-    const { products, isLoading, isError } = useProducts("/products?gender=men")
+  const { products, isLoading, isError } = useProducts("/products?gender=men")
 
   return (
     <ShopLayout title={'Men'} pageDescription={'Compra tu ropa de hombre aquí'}>
-        <Typography variant="h1" sx={{ mb: 1 }}>Men</Typography>
-        <Typography variant="h2" sx={{ mb: 1 }}>Todos los productos </Typography>
-      
-        {
-            isLoading? <FullScreenLoading/> :
-            <ProductList products={products} />
-        }
+      <Typography variant="h1" sx={{ mb: 1 }}>Men</Typography>
+      <Typography variant="h2" sx={{ mb: 1 }}>Todos los productos </Typography>
+
+      {
+        isLoading ? <FullScreenLoading /> :
+          <ProductList products={products} />
+      }
 
     </ShopLayout>
-  )};
+  )
+};
 
 export default MenPage

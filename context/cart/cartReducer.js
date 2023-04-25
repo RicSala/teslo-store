@@ -1,8 +1,8 @@
 export const cartReducer = (state, action) => {
   switch (action.type) {
+
     case '[CART] - LoadCart from cookies | storage':
       const newCart = [...action.payload]
-      
       return {
         ...state,
         isLoaded: true,
@@ -18,10 +18,11 @@ export const cartReducer = (state, action) => {
     case '[CART] - Update product quantity':
       return {
         ...state,
-        productsInCart: 
+        productsInCart:
           state.productsInCart.map((product) => {
             if (product._id === action.payload._id && product.size === action.payload.size) { // if the id and size are the same, then we have the same product and we have to update the quantity
-            return action.payload }
+              return action.payload
+            }
 
             return product // if the id and size are not the same, then return the product
           })

@@ -1,9 +1,9 @@
 import { AddCircleOutline, RemoveCircleOutline } from "@mui/icons-material";
 import { Box, IconButton, Typography } from "@mui/material";
 
+
+
 export const ItemCounter = ({count, updateQuantity, maxValue}) => {
-
-
 
   const checkLimitsAndUpdate = (quantity) => {
 
@@ -18,24 +18,19 @@ export const ItemCounter = ({count, updateQuantity, maxValue}) => {
   }
 
 
-  return (
-    <Box
-    display={"flex"}
-    alignItems={"center"}
 
-    >
-    <IconButton
-    onClick={() => 
-    {console.log("count", count)
-    checkLimitsAndUpdate(count - 1)}}
-    >
-        <RemoveCircleOutline/>
-    </IconButton>
+  return (
+    <Box display={"flex"} alignItems={"center"}>
+
+      <IconButton onClick = {() => {checkLimitsAndUpdate(count - 1)}}>
+          <RemoveCircleOutline/>
+      </IconButton>
+
         <Typography sx={{ width:40, textAlign:'center'}}> {count} </Typography>
-    <IconButton
-    onClick={() => checkLimitsAndUpdate(count + 1)}
-    >
-        <AddCircleOutline/>
-    </IconButton>
+
+      <IconButton onClick={() => checkLimitsAndUpdate(count + 1)}>
+          <AddCircleOutline/>
+      </IconButton>
+
     </Box>
   )};

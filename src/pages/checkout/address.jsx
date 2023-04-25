@@ -3,47 +3,47 @@ import { ShopLayout } from "../../../components/layout";
 import { isValidToken } from "../../../utils/jwt";
 
 const AddressPage = (props) => {
-  return (
-    <ShopLayout title={"Checkout"} pageDescription={"Confirma dirección de destino"}>
+    return (
+        <ShopLayout title={"Checkout"} pageDescription={"Confirma dirección de destino"}>
 
-        <Typography variant="h1" component={"h1"}>Dirección</Typography>
+            <Typography variant="h1" component={"h1"}>Dirección</Typography>
             <Grid container spacing={2} mt={2}>
                 <Grid item xs={12} sm={6}>
-                    <TextField label="Nombre" variant="filled" fullWidth/>
+                    <TextField label="Nombre" variant="filled" fullWidth />
                 </Grid>
                 <Grid item xs={12} sm={6}>
-                    <TextField label="Apellido" variant="filled" fullWidth/>
+                    <TextField label="Apellido" variant="filled" fullWidth />
                 </Grid>
                 <Grid item xs={12} sm={6}>
-                    <TextField label="Dirección" variant="filled" fullWidth/>
+                    <TextField label="Dirección" variant="filled" fullWidth />
                 </Grid>
                 <Grid item xs={12} sm={6}>
-                    <TextField label="Dirección 2 (Opcional)" variant="filled" fullWidth/>
+                    <TextField label="Dirección 2 (Opcional)" variant="filled" fullWidth />
                 </Grid>
                 <Grid item xs={12} sm={6}>
-                    <TextField label="Código Postal" variant="filled" fullWidth/>
+                    <TextField label="Código Postal" variant="filled" fullWidth />
                 </Grid>
                 <Grid item xs={12} sm={6}>
-                    <TextField label="Ciudad" variant="filled" fullWidth/>
+                    <TextField label="Ciudad" variant="filled" fullWidth />
                 </Grid>
                 <Grid item xs={12} sm={6}>
                     <FormControl fullWidth>
-                    <Select
-                        variant="filled"
-                        label="País"
-                        value={1}
-                    >
-                        <option value={1}>Argentina</option>
-                        <option value={2}>Brasil</option>
-                        <option value={3}>Chile</option>
-                        <option value={4}>Colombia</option>
+                        <Select
+                            variant="filled"
+                            label="País"
+                            value={1}
+                        >
+                            <option value={1}>Argentina</option>
+                            <option value={2}>Brasil</option>
+                            <option value={3}>Chile</option>
+                            <option value={4}>Colombia</option>
 
-                    </Select>
+                        </Select>
 
                     </FormControl>
                 </Grid>
                 <Grid item xs={12} sm={6}>
-                    <TextField label="Teléfono" variant="filled" fullWidth/>
+                    <TextField label="Teléfono" variant="filled" fullWidth />
                 </Grid>
             </Grid>
 
@@ -52,9 +52,10 @@ const AddressPage = (props) => {
                     Revisar Pedido
                 </Button>
             </Box>
-      
-    </ShopLayout>
-  )};
+
+        </ShopLayout>
+    )
+};
 
 
 //   // This was the way it was done before NextJS 12, now we can use middleware
@@ -62,6 +63,7 @@ const AddressPage = (props) => {
 //   // 1. We can reuse the same code in other pages
 //   // 2. The page can be rendered statically, but get confirmation from the server that the user is logged in (this is not possible with getserversideprops  )
 //   // when we use serversideprops, the page is rendered upon each request, so we can't use the static optimization
+
 //   export const getServerSideProps = async (context) => {
 
 //       const { token = '' } = context.req.cookies;
@@ -71,11 +73,10 @@ const AddressPage = (props) => {
 //         await isValidToken(token)
 //         isValid = true;
 //     } catch (error) {
-//         console.log("error", error);
 //         isValid = false;
 //     }
 
-//     if(!isValid) {
+//     if(!isValid) { // if it's not valid, redirect to login page
 //         return {
 //             redirect: {
 //                 destination: '/auth/login?p=checkout/address',
@@ -84,7 +85,8 @@ const AddressPage = (props) => {
 //         }
 //     }
 
-//     return {
+//     return { // otherwise, let them stay in the page
+//     REVIEW: is the page pre loaded before getting server side props?
 //         props: {}
 //     }
 //   }

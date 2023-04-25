@@ -5,30 +5,26 @@ import { jwt } from "../../../../utils";
 
 export default function handler(req, res) {
 
-    // switch for the didfferent methods
+    // switch for the different methods
     switch (req.method) {
-        case 'GET':
-            return;
-        case 'POST':
-            return loginUser(req, res);
-        
-        default:
-            return res.status(405).json({ message: 'Bad request' });
-            break;
+        case 'GET': return;
+        case 'POST': return loginUser(req, res);
+
+        default: return res.status(405).json({ message: 'Bad request' });
     }
 
-  }
+}
 
 
-  const loginUser = async (req, res) => {
+const loginUser = async (req, res) => {
     // get the email and password from the body
     const { email = '', password = '' } = req.body;
 
     await db.connect();
     const user = await User.findOne({ email });
-
     await db.disconnect();
-    if (!user) {
+
+    if (!user) { // We don't want to give information about the user, so we just say that the email or password is wrong
         return res.status(400).json({ status: 'ERROR', error: 'Correo o contraseña no válidos - EMAIL' });
     }
 
@@ -40,6 +36,6 @@ export default function handler(req, res) {
 
     const token = jwt.signToken(user._id, user.email); // Signs the token with the user id and email creates a jwt token
 
-    return res.status(200).json({ status: 'OK', token, user: { name, email, role }});
-  
-    }
+    return res.status(200).json({ status: 'OK', token, user: { name, email, role } });
+
+}
