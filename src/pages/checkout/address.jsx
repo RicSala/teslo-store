@@ -1,59 +1,156 @@
-import { Box, Button, FormControl, Grid, InputLabel, Select, TextField, Typography } from "@mui/material";
+import { Box, Button, FormControl, Grid, InputLabel, MenuItem, Select, TextField, Typography } from "@mui/material";
 import { ShopLayout } from "../../../components/layout";
-import { isValidToken } from "../../../utils/jwt";
+import { countries } from "../../../utils";
+import { useForm } from "react-hook-form";
+import Cookies from "js-cookie";
+import { useRouter } from "next/router";
+import { CartContext } from "../../../context";
+import { useContext, useEffect } from "react";
+
+// type formData = {
+//     firstname: string,
+//     lastname: string,
+//     address: string,
+//     address2: string,
+//     zip: string,
+//     city: string,
+//     country: string,
+//     phone: string
+// }
+
+// The problem with this is that i will execute on the server side and not on the client side to as the component is rendered on the client side
+// const address = Cookies.get('address') ? JSON.parse(Cookies.get('address')) : null
+// so we need a function instead, so it can be executed on the client side
+
+const getAddress = () => {
+
+    const { firstname, lastname, address, address2, zip, city, country, phone } = Cookies.get('address') ? JSON.parse(Cookies.get('address')) : {}
+    return {
+        firstname: firstname || '',
+        lastname: lastname || '',
+        address: address || '',
+        address2: address2 || '',
+        zip: zip || '',
+        city: city || '',
+        country: country || '',
+        phone: phone || '',
+    };
+};
+
+
 
 const AddressPage = (props) => {
+
+    const { updateAddress } = useContext(CartContext)
+
+    const router = useRouter()
+
+
+    const { register, handleSubmit, watch, formState: { errors } } = useForm({
+        defaultValues: {
+            ...getAddress()
+        }
+    });
+    const onSubmitAddress = (data) => {
+        updateAddress(data)
+        router.push('/checkout/summary')
+    }
+
+
+
     return (
         <ShopLayout title={"Checkout"} pageDescription={"Confirma dirección de destino"}>
+            <form onSubmit={handleSubmit(onSubmitAddress)}>
 
-            <Typography variant="h1" component={"h1"}>Dirección</Typography>
-            <Grid container spacing={2} mt={2}>
-                <Grid item xs={12} sm={6}>
-                    <TextField label="Nombre" variant="filled" fullWidth />
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                    <TextField label="Apellido" variant="filled" fullWidth />
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                    <TextField label="Dirección" variant="filled" fullWidth />
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                    <TextField label="Dirección 2 (Opcional)" variant="filled" fullWidth />
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                    <TextField label="Código Postal" variant="filled" fullWidth />
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                    <TextField label="Ciudad" variant="filled" fullWidth />
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                    <FormControl fullWidth>
-                        <Select
-                            variant="filled"
-                            label="País"
-                            value={1}
-                        >
-                            <option value={1}>Argentina</option>
-                            <option value={2}>Brasil</option>
-                            <option value={3}>Chile</option>
-                            <option value={4}>Colombia</option>
+                <Typography variant="h1" component={"h1"}>Dirección</Typography>
+                <Grid container spacing={2} mt={2}>
+                    <Grid item xs={12} sm={6}>
+                        <TextField label="Nombre" variant="filled" fullWidth
+                            {...register('firstname', { required: 'Este campo es requerido' })}
+                            error={!!errors.firstname}
+                            helperText={errors.firstname?.message}
+                        />
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                        <TextField label="Apellido" variant="filled" fullWidth
+                            {...register('lastname', { required: 'Este campo es requerido' })}
+                            error={!!errors.lastname}
+                            helperText={errors.lastname?.message} />
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                        <TextField label="Dirección" variant="filled" fullWidth
+                            {...register('address', { required: 'Este campo es requerido' })}
+                            error={!!errors.address}
+                            helperText={errors.address?.message} />
 
-                        </Select>
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                        <TextField label="Dirección 2 (Opcional)" variant="filled" fullWidth
+                            {...register('address2')}
+                        />
 
-                    </FormControl>
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                        <TextField label="Código Postal" variant="filled" fullWidth
+                            {...register('zip', { required: 'Este campo es requerido' })}
+                            error={!!errors.zip}
+                            helperText={errors.zip?.message} />
+
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                        <TextField label="Ciudad" variant="filled" fullWidth
+                            {...register('city', { required: 'Este campo es requerido' })}
+                            error={!!errors.city}
+                            helperText={errors.city?.message} />
+
+                    </Grid>
+                    {/* TODO: Question asked on devtalles. Waiting for response: https://cursos.devtalles.com/courses/take/next/lessons/35656744-mostrar-la-direccion-en-pantalla*/}
+                    <Grid item xs={12} sm={6}>
+                        <FormControl fullWidth>
+                            <TextField
+                                select
+                                variant="filled"
+                                label="País"
+                                defaultValue={
+                                    // getAddress() ?
+                                    //     getAddress().country
+                                    //     :
+                                    countries[0].code
+                                }
+                                {...register('country', { required: 'Este campo es requerido' })}
+                                error={!!errors.country}
+                                helperText={errors.country?.message}
+                            >
+                                {
+                                    countries.map((country) => {
+                                        return (
+                                            <MenuItem key={country.code} value={country.code}>{country.name}</MenuItem>
+                                        )
+                                    })
+                                }
+
+                            </TextField>
+
+                        </FormControl>
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                        <TextField label="Teléfono" variant="filled" fullWidth
+                            {...register('phone', { required: 'Este campo es requerido' })}
+                            error={!!errors.phone}
+                            helperText={errors.phone?.message} />
+                    </Grid>
                 </Grid>
-                <Grid item xs={12} sm={6}>
-                    <TextField label="Teléfono" variant="filled" fullWidth />
-                </Grid>
-            </Grid>
 
-            <Box mt={5} display={'flex'} flexDirection={'row'} justifyContent={'center'}>
-                <Button color="secondary" className="circular-btn" size="large" fullWidth>
-                    Revisar Pedido
-                </Button>
-            </Box>
+                <Box mt={5} display={'flex'} flexDirection={'row'} justifyContent={'center'}>
+                    <Button type="submit" color="secondary" className="circular-btn" size="large" fullWidth>
+                        Revisar Pedido
+                    </Button>
+                </Box>
 
-        </ShopLayout>
+            </form>
+
+
+        </ShopLayout >
     )
 };
 

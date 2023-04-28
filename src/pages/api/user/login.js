@@ -34,7 +34,9 @@ const loginUser = async (req, res) => {
 
     const { role, name } = user;
 
-    const token = jwt.signToken(user._id, user.email); // Signs the token with the user id and email creates a jwt token
+    const token = await jwt.signToken(user._id, user.email); // Signs the token with the user id and email creates a jwt token
+
+    console.log("token from signin", token)
 
     return res.status(200).json({ status: 'OK', token, user: { name, email, role } });
 

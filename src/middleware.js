@@ -13,7 +13,6 @@ export async function middleware(req, event) {
 
 }
 
-// See "Matching Paths" below to learn more
 export const config = {
     matcher: '/checkout/:path*',
 }
@@ -30,7 +29,7 @@ const validateUser = async (req) => {
         isValid = true;
         return NextResponse.next()
     } catch (error) {
-        console.log("error", error);
+        console.log("error catch", error);
         isValid = false;
         console.log(req.nextUrl.pathname)
         return NextResponse.redirect(new URL(`/auth/login?p=${req.nextUrl.pathname}`, req.url))

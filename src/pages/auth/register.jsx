@@ -4,7 +4,6 @@ import NextLink from "next/link";
 import { useForm } from "react-hook-form";
 import { validations } from "../../../utils";
 import { useContext, useState } from "react";
-import { tesloApi } from "../../../api";
 import { ErrorOutline } from "@mui/icons-material";
 import { useRouter } from "next/router";
 import { AuthContext } from "../../../context";

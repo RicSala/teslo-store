@@ -1,6 +1,14 @@
 export const cartReducer = (state, action) => {
   switch (action.type) {
 
+
+    case '[CART] - Update shipping address':
+    case '[CART] - Load shipping address from cookies | storage':
+      return {
+        ...state,
+        shippingAddress: action.payload
+      }
+
     case '[CART] - LoadCart from cookies | storage':
       const newCart = [...action.payload]
       return {

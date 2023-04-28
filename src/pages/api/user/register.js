@@ -70,7 +70,7 @@ const register = async (req, res) => {
 
     const { _id, role } = newUser;
 
-    const token = jwt.signToken(_id, email); // Signs the token with the user id and email creates a jwt token
+    const token = await jwt.signToken(_id, email); // Signs the token with the user id and email creates a jwt token
 
 
     res.status(200).json({ status: 'OK', token, user: { email, role, name } });

@@ -9,7 +9,8 @@ const CART_INITIAL_STATE = {
   subtotal: 0,
   tax: 0,
   total: 0,
-} ;
+  shippingAddress: undefined,
+};
 
 
 
@@ -30,7 +31,7 @@ export const CartProvider = ({ children }) => {
     try {
       const cartFromCookies = Cookie.get('productsInCart') ? JSON.parse(Cookie.get('productsInCart')) : []; // get the cart from the cookie
       dispatch({ type: '[CART] - LoadCart from cookies | storage', payload: cartFromCookies }) // and update the state
-      
+
     } catch (error) {
       console.log("ERROR!", error)
       dispatch({ type: '[CART] - LoadCart from cookies | storage', payload: [] })
@@ -43,8 +44,8 @@ export const CartProvider = ({ children }) => {
   // This useEffect: update the order summary state every time the cart changes
   useEffect(() => {
 
-    const numberOfItems = state.productsInCart.reduce((prev, product) => prev + product.quantity , 0)
-    const subtotal = state.productsInCart.reduce((prev, product) => prev + product.price * product.quantity , 0)
+    const numberOfItems = state.productsInCart.reduce((prev, product) => prev + product.quantity, 0)
+    const subtotal = state.productsInCart.reduce((prev, product) => prev + product.price * product.quantity, 0)
     const taxRate = Number(process.env.NEXT_PUBLIC_TAX_RATE || 0)
     const tax = subtotal * taxRate
     const total = subtotal + tax
@@ -61,7 +62,7 @@ export const CartProvider = ({ children }) => {
       type: '[CART] - Update order summary',
       payload: orderSummary
     })
-  
+
   }, [state.productsInCart]); // we do this every time the cart changes
 
 
@@ -69,6 +70,23 @@ export const CartProvider = ({ children }) => {
   useEffect(() => {
     Cookie.set('productsInCart', JSON.stringify(state.productsInCart)) // save the cart to the cookie (this is a side effect)...
   }, [state.productsInCart]); // ... when the cart changes
+
+
+  // This useEffect: loads the shipping address from the cookie the first time the component loads
+  useEffect(() => {
+    const shippingAddressFromCookies = Cookie.get('address') ? JSON.parse(Cookie.get('address')) : undefined; // get the shipping address from the cookie
+
+    if (!shippingAddressFromCookies) return; // if there is no shipping address in the cookie, then return
+
+    dispatch({ type: '[CART] - Load shipping address from cookies | storage', payload: shippingAddressFromCookies }) // and update the state
+  }, []); // run this effect only once
+
+
+  const updateAddress = (address) => {
+    Cookie.set('address', JSON.stringify(address))
+
+    dispatch({ type: '[CART] - Update shipping address', payload: address }) // and update the state
+  }
 
 
   // Given an array and an item, if the item is not in the array, then add it to the array, otherwise update the quantity
@@ -95,7 +113,7 @@ export const CartProvider = ({ children }) => {
       type: '[CART] - Update cart',
       payload: UpdatedCart
     });
-    
+
 
   };
 
@@ -119,14 +137,15 @@ export const CartProvider = ({ children }) => {
 
 
   return (
-    <CartContext.Provider value={{ 
+    <CartContext.Provider value={{
       ...state,
-    
-    // methods
+
+      // methods
       addProductToCart,
       updateProduct,
-      removeProductFromCart
-     }}>
+      removeProductFromCart,
+      updateAddress,
+    }}>
       {children}
     </CartContext.Provider>
   );

@@ -20,6 +20,8 @@ const checkJWT = async (req, res) => {
 
     let userId
 
+    console.log("token from validate-token", token)
+
     // Check if the token is valid...
     try {
         userId = await jwt.isValidToken(token); // Verifies the token and returns the user
@@ -27,11 +29,14 @@ const checkJWT = async (req, res) => {
         return res.status(401).json({ status: 'ERROR', error: 'Token no válido' });
     }
 
+
+    console.log("userId from validate-token", userId)
     // ...if it is, we get the user from the database...
     await db.connect();
     const user = await User.findById(userId).lean()
     await db.disconnect();
 
+    console.log("user from validate-token", user)
     // ... if the user doesn't exist, we return an error
     if (!user) {
         return res.status(400).json({ status: 'ERROR', error: 'No se ha encontrado el usuario' });
@@ -41,7 +46,7 @@ const checkJWT = async (req, res) => {
 
     // ...if the user exists, we return the user and a new token
     return res.status(200).json({
-        token: jwt.signToken(_id, email), // Revalidates the token 
+        token: await jwt.signToken(_id, email), // Revalidates the token 
         user: { name, email, role }
     });
 }
