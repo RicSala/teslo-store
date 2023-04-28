@@ -4,6 +4,7 @@ import Cookies from 'js-cookie';
 import { tesloApi } from '../../api';
 import axios from 'axios';
 import { useRouter } from 'next/router';
+import { useSession } from 'next-auth/react';
 
 const AUTH_INITIAL_STATE = {
   isLoggedIn: false,
@@ -12,14 +13,29 @@ const AUTH_INITIAL_STATE = {
 
 export const AuthProvider = ({ children }) => {
 
-  const router = useRouter(); // 
   const [state, dispatch] = useReducer(authReducer, AUTH_INITIAL_STATE);
 
-  // Every time the app loads we check if there is a token in the cookies and revalidate it
-  useEffect(() => { // TODO: this is running twice, we need to fix it
-    // get token from the cookies
-    checkToken();
-  }, []);
+  const { data, status } = useSession()
+
+  const router = useRouter(); // 
+
+  // We are no longer gonna this this here, we are gonna use next-auth
+  // // Every time the app loads we check if there is a token in the cookies and revalidate it
+  // useEffect(() => { // TODO: this is running twice, we need to fix it
+  //   // get token from the cookies
+  //   checkToken();
+  // }, []);
+
+  useEffect(() => {
+
+    if (status === 'authenticated') {
+      console.log("user:", data.user)
+    }
+  }, [status, data])
+  // dispatch({ type: '[AUTH] - Login', payload: data?.user });
+
+
+
 
 
   const checkToken = async () => {
@@ -28,14 +44,14 @@ export const AuthProvider = ({ children }) => {
 
     try {
       // call endpoint to validate token
-      const {data} = await tesloApi.get('/user/validate-token')
+      const { data } = await tesloApi.get('/user/validate-token')
       // revalidate token saving the new one
       Cookies.set('token', data.token);
       // dispatch action to update the user in the state
-      dispatch({type: '[AUTH] - Login', payload: data.user});
+      dispatch({ type: '[AUTH] - Login', payload: data.user });
 
     } catch (error) {
-    // If there is an error, delete the token and the user from cookies
+      // If there is an error, delete the token and the user from cookies
       Cookies.remove('token');
     }
 
@@ -46,48 +62,47 @@ export const AuthProvider = ({ children }) => {
 
   const loginUser = async (email, password) => {
     try {
-      const {data} = await tesloApi.post('/user/login', { email, password });
-      const {token, user} = data;
+      const { data } = await tesloApi.post('/user/login', { email, password });
+      const { token, user } = data;
       // Save token in cookies
       Cookies.set('token', token);
       // Save user in state
-      dispatch({type: '[AUTH] - Login', payload: user});
+      dispatch({ type: '[AUTH] - Login', payload: user });
       return true
 
     } catch (error) { // We only return one type of error because we don't want to show the user the error message
-      console.log("ERROR!", error)
       return false
     }
   }
 
 
-  
-  const registerUser = async ({name, email, password}) => {
+
+  const registerUser = async ({ name, email, password }) => {
 
     try {
-      const {data} = await tesloApi.post('/user/register', { name, email, password });
-      const {token, user} = data;
+      const { data } = await tesloApi.post('/user/register', { name, email, password });
+      const { token, user } = data;
       // Save token in cookies
       Cookies.set('token', token);
       // Save user in state
-      dispatch({type: '[AUTH] - Login', payload: user});
+      dispatch({ type: '[AUTH] - Login', payload: user });
       // return true
       return {
         hasError: false,
       }
-      
+
     } catch (error) {
-        if(axios.isAxiosError(error)) { // here we do want to give the user the error message
-          return {
-            hasError: true,
-            error: error.response?.data.error
-          }
-        }
+      if (axios.isAxiosError(error)) { // here we do want to give the user the error message
         return {
           hasError: true,
-          error: 'Ha ocurrido un error inesperado'
+          error: error.response?.data.error
         }
-    } 
+      }
+      return {
+        hasError: true,
+        error: 'Ha ocurrido un error inesperado'
+      }
+    }
 
   }
 
@@ -102,14 +117,14 @@ export const AuthProvider = ({ children }) => {
 
   // We return the state and the methods so we can use them in the components
   return (
-    <AuthContext.Provider value={{ 
-        ...state,
-        
-        // methods
-        loginUser,
-        registerUser,
-        logoutUser,
-        }}>
+    <AuthContext.Provider value={{
+      ...state,
+
+      // methods
+      loginUser,
+      registerUser,
+      logoutUser,
+    }}>
       {children}
     </AuthContext.Provider>
   );

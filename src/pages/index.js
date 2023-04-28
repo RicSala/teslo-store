@@ -7,6 +7,7 @@ import { initialData } from "../../database/seed-data"
 import { ProductList } from "../../components/products"
 import { useProducts } from "../../hooks"
 import { FullScreenLoading } from "../../components/ui"
+// import { useSession } from "next-auth/react"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -14,6 +15,9 @@ const inter = Inter({ subsets: ["latin"] })
 export default function HomePage() {
 
 	const { products, isLoading, isError } = useProducts("/products")
+
+	// const session = useSession()
+	// console.log("session", session)
 
 	return (
 		<ShopLayout

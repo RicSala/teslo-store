@@ -56,7 +56,6 @@ export const CartProvider = ({ children }) => {
       tax,
       total
     }
-    console.log("OrderSummary", orderSummary)
 
     dispatch({
       type: '[CART] - Update order summary',
