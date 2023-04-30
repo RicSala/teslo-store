@@ -4,7 +4,7 @@ import Cookies from 'js-cookie';
 import { tesloApi } from '../../api';
 import axios from 'axios';
 import { useRouter } from 'next/router';
-import { useSession } from 'next-auth/react';
+import { useSession, signOut } from 'next-auth/react';
 
 const AUTH_INITIAL_STATE = {
   isLoggedIn: false,
@@ -26,13 +26,14 @@ export const AuthProvider = ({ children }) => {
   //   checkToken();
   // }, []);
 
+  // if status is authenticated, we update the state with the user
   useEffect(() => {
 
     if (status === 'authenticated') {
-      console.log("user:", data.user)
+      // console.log("user:", data.user)
+      dispatch({ type: '[AUTH] - Login', payload: data?.user });
     }
   }, [status, data])
-  // dispatch({ type: '[AUTH] - Login', payload: data?.user });
 
 
 
@@ -108,9 +109,14 @@ export const AuthProvider = ({ children }) => {
 
 
   const logoutUser = () => {
-    Cookies.remove('token');
     Cookies.remove('productsInCart');
-    router.reload(); // reload the page to update the state instead of dispatching an action (as we removed the cookies, we don't have the user anymore)
+    Cookies.remove('address');
+    signOut()
+
+
+
+    // Cookies.remove('token');
+    // router.reload(); // reload the page to update the state instead of dispatching an action (as we removed the cookies, we don't have the user anymore)
   }
 
 

@@ -50,6 +50,16 @@ export const cartReducer = (state, action) => {
         ...action.payload
       }
 
+    case '[CART] - Order completed':
+      return {
+        ...state,
+        productsInCart: [],
+        numberOfItems: 0,
+        subtotal: 0,
+        tax: 0,
+        total: 0,
+      }
+
     default:
       return state;
   }

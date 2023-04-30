@@ -53,3 +53,15 @@ export const getAllProducts = async () => {
     return JSON.parse(JSON.stringify(products))
 
 }
+
+// return an object with numberOfProducts, numberOfProductsWithNoInventory, numberOfProductsWithLowInventory
+export const getNumberOfProducts = async () => {
+
+    await db.connect();
+    const numberOfProducts = await Product.countDocuments();
+    const numberOfProductsWithNoInventory = await Product.countDocuments({ inStock: 0 });
+    const numberOfProductsWithLowInventory = await Product.countDocuments({ inStock: { $lt: 10 } });
+    await db.disconnect();
+
+    return { numberOfProducts, numberOfProductsWithNoInventory, numberOfProductsWithLowInventory };
+}

@@ -20,7 +20,7 @@ const checkJWT = async (req, res) => {
 
     let userId
 
-    console.log("token from validate-token", token)
+    // console.log("token from validate-token", token)
 
     // Check if the token is valid...
     try {
@@ -30,13 +30,13 @@ const checkJWT = async (req, res) => {
     }
 
 
-    console.log("userId from validate-token", userId)
+    // console.log("userId from validate-token", userId)
     // ...if it is, we get the user from the database...
     await db.connect();
     const user = await User.findById(userId).lean()
     await db.disconnect();
 
-    console.log("user from validate-token", user)
+    // console.log("user from validate-token", user)
     // ... if the user doesn't exist, we return an error
     if (!user) {
         return res.status(400).json({ status: 'ERROR', error: 'No se ha encontrado el usuario' });

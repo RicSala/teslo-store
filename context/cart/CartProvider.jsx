@@ -1,6 +1,8 @@
 import { useEffect, useReducer, useRef } from 'react';
 import { CartContext, cartReducer } from '.';
 import Cookie from 'js-cookie';
+import { tesloApi } from '../../api';
+import axios from 'axios';
 
 const CART_INITIAL_STATE = {
   isLoaded: false,
@@ -16,6 +18,7 @@ const CART_INITIAL_STATE = {
 
 // TODO: why this component is loading twice???
 export const CartProvider = ({ children }) => {
+
 
   const [state, dispatch] = useReducer(cartReducer, CART_INITIAL_STATE);
 
@@ -81,6 +84,7 @@ export const CartProvider = ({ children }) => {
   }, []); // run this effect only once
 
 
+
   const updateAddress = (address) => {
     Cookie.set('address', JSON.stringify(address))
 
@@ -135,6 +139,54 @@ export const CartProvider = ({ children }) => {
   }
 
 
+
+  const createOrder = async () => {
+
+
+    if (!state.shippingAddress) throw new Error("No hay dirección de entrega")
+
+    const order = {
+      orderItems: state.productsInCart, // because it's expecting exactly what we have in the productsInCart state. We could also map the productsInCart to match the expected format
+      shippingAddress: state.shippingAddress, // same here
+      numberOfItems: state.numberOfItems,
+      subtotal: state.subtotal,
+      tax: state.tax,
+      total: state.total,
+      isPaid: false, // is indeed already false by default
+
+    }
+
+    console.log("createOrder")
+
+    try {
+
+      const { data } = await tesloApi.post('/orders', order)
+
+      // dispatch the action  order completed
+      dispatch({ type: '[CART] - Order completed', })
+
+      return {
+        hasError: false,
+        message: data.newOrder._id
+      }
+
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        return {
+          hasError: true,
+          message: error.response.data.message
+        }
+      }
+      return {
+        hasError: true,
+        message: "Error no controlado, hable con el administrador"
+      }
+    }
+  }
+
+
+
+
   return (
     <CartContext.Provider value={{
       ...state,
@@ -144,6 +196,7 @@ export const CartProvider = ({ children }) => {
       updateProduct,
       removeProductFromCart,
       updateAddress,
+      createOrder,
     }}>
       {children}
     </CartContext.Provider>

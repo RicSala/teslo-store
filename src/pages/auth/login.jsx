@@ -1,13 +1,13 @@
-import { useContext, useState } from "react";
+import { useEffect, useState } from "react";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
-import { Box, Button, Chip, Grid, Link, TextField, Typography } from "@mui/material";
+import { Box, Button, Chip, Divider, Grid, Link, TextField, Typography } from "@mui/material";
 import { ErrorOutline } from "@mui/icons-material";
 import { useForm } from "react-hook-form";
 
 import { AuthLayout } from "../../../components/layout";
 import { validations } from "../../../utils";
-import { AuthContext } from "../../../context";
+import { getProviders, getSession, signIn } from "next-auth/react";
 
 const LoginPage = () => {
 
@@ -15,23 +15,36 @@ const LoginPage = () => {
     // We use useForm hook to handle form validation
     const { register, handleSubmit, watch, formState: { errors } } = useForm();
     const [showError, setShowError] = useState(false);
-    const { loginUser } = useContext(AuthContext);
+    const [providers, setProviders] = useState({});
     const destination = router.query.p?.toString(); // query string 
 
 
+    useEffect((props) => {
+        getProviders().then((providers) => {
+            // console.log(providers);
+            setProviders(providers);
+        });
+    }, []);
 
     const onLoginUser = async ({ email, password }) => {
         setShowError(false);
-        const isValidLogin = await loginUser(email, password);
 
-        if (!isValidLogin) {
-            setShowError(true);
-            setTimeout(() => {
-                setShowError(false);
-            }, 3000);
-            return
-        }
-        router.replace(destination || '/');
+        await signIn('credentials', {
+            email,
+            password,
+        });
+
+        // This is the old way of doing it, now we use nextAuth
+        // const isValidLogin = await loginUser(email, password);
+
+        // if (!isValidLogin) {
+        //     setShowError(true);
+        //     setTimeout(() => {
+        //         setShowError(false);
+        //     }, 3000);
+        //     return
+        // }
+        // router.replace(destination || '/');
     }
 
     return (
@@ -103,6 +116,29 @@ const LoginPage = () => {
                             </NextLink>
                         </Grid>
 
+                        <Grid item xs={12} display={'flex'} flexDirection={'column'} justifyContent={'center'}>
+                            <Divider sx={{ width: '100%', mb: 2 }} />
+
+                            {Object.values(providers).map((provider) => {
+                                if (provider.name === 'Custom Login') {
+                                    return null;
+                                }
+                                return (
+                                    <Button
+                                        key={provider.id}
+                                        variant="outlined"
+                                        color="primary"
+                                        sx={{ mb: 1 }}
+                                        fullWidth
+                                        onClick={() => signIn(provider.id, { callbackUrl: '/' })}
+                                    >
+                                        Ingresar con {provider.name}
+                                    </Button>
+                                );
+                            })}
+
+                        </Grid>
+
                     </Grid>
 
                 </Box>
@@ -111,5 +147,32 @@ const LoginPage = () => {
         </AuthLayout>
     )
 };
+
+export const getServerSideProps = async ({ req, query }) => {
+
+    const session = await getSession({ req });
+
+    console.log("session from login", session)
+
+    const { p = '/' } = query;
+
+    // console.log("session from login", session)
+    // console.log("query from login", p)
+
+    if (session) {
+        return {
+            redirect: {
+                destination: p.toString(),
+                permanent: false,
+            }
+        }
+    }
+
+
+    return {
+        props: {}
+    }
+}
+
 
 export default LoginPage;

@@ -35,7 +35,7 @@ export const Navbar = () => {
 	const [isSearchVisible, setIsSearchVisible] = useState(false);
 
 	const onSearchTerm = () => {
-		console.log(router)
+		// console.log(router)
 		if (searchTerm.trim().length === 0) return;
 		router.push(`/search/${searchTerm}`)
 	}

@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 import { db, database } from "../../../database";
-import { Product, User } from "../../../models";
+import { Order, Product, User } from "../../../models";
 
 
 // Seed the database
@@ -19,6 +19,7 @@ export default async function handler(req, res) {
 
         await User.deleteMany({});
         await Product.deleteMany({});
+        await Order.deleteMany({});
         await User.insertMany(database.initialData.users);
         await Product.insertMany(database.initialData.products);
 

@@ -6,6 +6,7 @@ import Cookies from "js-cookie";
 import { useRouter } from "next/router";
 import { CartContext } from "../../../context";
 import { useContext, useEffect } from "react";
+import { getSession } from "next-auth/react";
 
 // type formData = {
 //     firstname: string,
@@ -32,7 +33,7 @@ const getAddress = () => {
         address2: address2 || '',
         zip: zip || '',
         city: city || '',
-        country: country || '',
+        country: country || countries[0].code,
         phone: phone || '',
     };
 };
@@ -46,15 +47,23 @@ const AddressPage = (props) => {
     const router = useRouter()
 
 
-    const { register, handleSubmit, watch, formState: { errors } } = useForm({
+    const { register, handleSubmit, watch, reset, formState: { errors } } = useForm({
         defaultValues: {
             ...getAddress()
         }
     });
-    const onSubmitAddress = (data) => {
+
+    const onSubmitAddress = async (data) => {
+        const session = await getSession({ req: props.req })
+        console.log("session", session)
         updateAddress(data)
         router.push('/checkout/summary')
     }
+
+    useEffect(() => {
+        reset(getAddress())
+    }, [reset])
+
 
 
 

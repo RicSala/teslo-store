@@ -1,23 +1,53 @@
-import { Box, Button, Card, CardContent, Divider, Grid, Link, Typography } from "@mui/material";
+import { Box, Button, Card, CardContent, Chip, Divider, Grid, Link, Typography } from "@mui/material";
 import { ShopLayout } from "../../../components/layout";
 import { CartList, OrderSummary } from "../../../components/cart";
 import NextLink from "next/link";
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import { CartContext } from "../../../context";
 
 import { countries } from '../../../utils/countries'
+import { useRouter } from "next/router";
+import Cookies from "js-cookie";
 
 const SummaryPage = () => {
 
-    // get address information from the state cartContext
-    const { shippingAddress, numberOfItems } = useContext(CartContext);
+    const router = useRouter();
 
-    if (!shippingAddress) return null // if there is no shipping address, then return null (this is to avoid errors
-    // TODO: add a redirect to the address page if there is no shipping address
+    const [isPosting, setIsPosting] = useState(false);
+    const [errorMessage, setErrorMessage] = useState('');
+
+    // get address information from the state cartContext
+    const { shippingAddress = {}, numberOfItems, createOrder } = useContext(CartContext);
+
+    useEffect(() => {
+        if (!Cookies.get('address')) {
+            router.push('/checkout/address')
+        }
+    }, [router])
+
+
+    const onCreateOrder = async () => {
+        setIsPosting(true);
+        const { hasError, message } = await createOrder()
+
+        console.log("message:", message)
+        console.log("hasError:", hasError)
+
+        if (hasError) {
+            setIsPosting(false);
+            setErrorMessage(message)
+            return
+        }
+
+        router.push(`/orders/${message}`)
+
+    }
+
+
+    // console.log("shippingAddress", shippingAddress)
 
     const { address, address2, city, country, firstname, lastname, phone, zip } = shippingAddress
 
-    console.log("address", shippingAddress)
 
     return (
         <ShopLayout title='Resumen del pedido' pageDescription='Resumen de tu pedido'>
@@ -44,7 +74,7 @@ const SummaryPage = () => {
                             <Typography variant='body1'>{zip} {city}</Typography>
                             <Typography variant='body1'>{
                                 // given an array of country objects {code: 'ES', name: 'Spain'} and a country code, returns the country name
-                                countries.find(c => c.code === country).name
+                                countries.find(c => c.code === country)?.name || ''
 
                                 // we can also do that with a filter
                                 // countries.filter(c => c.code === country)[0].name
@@ -61,10 +91,20 @@ const SummaryPage = () => {
 
                             </Box>
                             <OrderSummary />
-                            <Box sx={{ mt: 3 }}>
-                                <Button color="secondary" className="circular-btn">
+                            <Box sx={{ mt: 3 }} display={'flex'} flexDirection={'column'} >
+                                <Button color="secondary" className="circular-btn" onClick={onCreateOrder}
+                                    disabled={isPosting} >
                                     Confirmar Pedido
                                 </Button>
+                                <Chip
+                                    color='error'
+                                    label={errorMessage}
+                                    sx={{ display: errorMessage ? 'flex' : 'none', mt: 2 }}
+                                >
+
+                                </Chip>
+
+
 
                             </Box>
                         </CardContent>

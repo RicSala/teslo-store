@@ -26,7 +26,7 @@ export const signToken = async (_id, email) => {
         .setExpirationTime('30d')
         .sign(secret)
 
-    console.log("jwt", jwt)
+    // console.log("jwt", jwt)
 
     return jwt
 }
@@ -41,8 +41,8 @@ export const isValidToken = async (token) => {
         throw new Error('No hay semilla de JWT, revisar variables de entorno');
     }
 
-        console.log('Token:', token);
-        console.log('Token type:', typeof token);
+        // console.log('Token:', token);
+        // console.log('Token type:', typeof token);
 
         const secret = new TextEncoder().encode(process.env.JWT_SECRET_SEED);
 
@@ -53,14 +53,14 @@ export const isValidToken = async (token) => {
                 algorithms: ['HS256']
             })
 
-            console.log("verifiedJWT", verifiedJWT)
+            // console.log("verifiedJWT", verifiedJWT)
 
             const { _id } = verifiedJWT.payload;
 
             return _id
 
         } catch (error) {
-            console.log("error", error)
+            // console.log("error", error)
             throw new Error('JWT no válido', error);
         }
     

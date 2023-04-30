@@ -63,7 +63,7 @@ const register = async (req, res) => {
         await db.disconnect();
 
     } catch (error) {
-        console.log("Error while saving new user", error);
+        // console.log("Error while saving new user", error);
         await db.disconnect();
         return res.status(400).json({ status: 'ERROR', error: 'No ha sido posible realizar el registro - USUARIO' });
     }
