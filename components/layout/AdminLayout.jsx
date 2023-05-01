@@ -25,12 +25,14 @@ export const AdminLayout = ({
             >
 
                 <Box display={'flex'} flexDirection={'column'}>
-                    <Typography variant={'h1'} component={'h1'}>
-                        {icon}
+                    <Typography variant={'h1'} component={'h1'}
+                        sx={{ mb: 2 }}
+                    >
+                        {icon}{' '}
                         {title}
                     </Typography>
 
-                    <Typography variant={'h2'} component={'h2'} sx={{ mb: 1 }}>
+                    <Typography variant={'h2'} component={'h2'} sx={{ mb: 2 }}>
                         {subtitle}
                     </Typography>
                 </Box>
@@ -39,7 +41,7 @@ export const AdminLayout = ({
                     {children}
 
                 </Box>
-            </main>
+            </main >
         </>
     )
 }
