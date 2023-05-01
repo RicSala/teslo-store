@@ -7,15 +7,14 @@ import { currency } from "../../utils";
 
 export const OrderSummary = ({ summaryItems }) => {
 
-    console.log("summaryItems", summaryItems)
-
+    const cartContext = useContext(CartContext);
 
     const {
         numberOfItems,
         subtotal,
         tax,
-        total
-    } = summaryItems ? summaryItems : useContext(CartContext)
+        total,
+    } = summaryItems ? summaryItems : cartContext;
 
     // const {
     //     numberOfItems,
