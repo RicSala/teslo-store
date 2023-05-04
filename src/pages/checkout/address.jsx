@@ -55,7 +55,6 @@ const AddressPage = (props) => {
 
     const onSubmitAddress = async (data) => {
         const session = await getSession({ req: props.req })
-        console.log("session", session)
         updateAddress(data)
         router.push('/checkout/summary')
     }

@@ -38,7 +38,6 @@ const OrderPage = ({ order }) => {
 
         } catch (error) {
             setIsPaying(false)
-            console.log(error)
         }
     }
 
@@ -192,7 +191,6 @@ export const getServerSideProps = async ({ req, query }) => {
     // at this point, we know that the user is the owner of the order
 
 
-    console.log("session from login", session)
 
 
     return {

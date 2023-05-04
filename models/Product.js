@@ -2,7 +2,7 @@ import mongoose, { Schema, model } from 'mongoose';
 
 
 const productSchema = new Schema({
-    description: { type: String, required: true },
+    description: { type: String, required: true, default: '' },
     images: [{ type: String }],
     inStock: { type: Number, required: true, default: 0 },
     price: { type: Number, required: true, default: 0 },
@@ -21,14 +21,16 @@ const productSchema = new Schema({
         enum: {
             values: ['shirts', 'pants', 'hoodies', 'hats'],
             message: '{VALUE} no es un tipo válido'
-        }
+        },
+        default: 'shirts'
     },
     gender: {
         type: String,
         enum: {
             values: ['men', 'women', 'kid', 'unisex'],
             message: '{VALUE} no es un genero válido'
-        }
+        },
+        default: 'unisex'
     }
 }, {
     timestamps: true // This will add createdAt and updatedAt fields to the schema

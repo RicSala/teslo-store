@@ -3,8 +3,6 @@ import { CartContext } from "../../context";
 import { useContext } from "react";
 import { currency } from "../../utils";
 
-
-
 export const OrderSummary = ({ summaryItems }) => {
 
     const cartContext = useContext(CartContext);
@@ -18,7 +16,7 @@ export const OrderSummary = ({ summaryItems }) => {
 
     // const {
     //     numberOfItems,
-    //     subtotal,
+    //     subtotal, 
     //     tax,
     //     total
     // } = useContext(CartContext)

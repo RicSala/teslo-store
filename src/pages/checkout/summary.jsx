@@ -30,8 +30,6 @@ const SummaryPage = () => {
         setIsPosting(true);
         const { hasError, message } = await createOrder()
 
-        console.log("message:", message)
-        console.log("hasError:", hasError)
 
         if (hasError) {
             setIsPosting(false);

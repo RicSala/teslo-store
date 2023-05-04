@@ -25,5 +25,12 @@ const getProducts = async (req, res) => {
         .lean();
     await db.disconnect();
 
-    res.status(200).json(products);
+    const updatedProducts = products.map(product => {
+        product.images = product.images.map(image =>
+            image.startsWith('http') ? image : `${process.env.HOST_NAME}/products/${image}`
+        )
+        return product
+    })
+
+    res.status(200).json(updatedProducts);
 }
